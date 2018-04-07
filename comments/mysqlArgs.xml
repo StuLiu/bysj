@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sql>
+    <mysql>
+        <userName>root</userName>
+        <password>123456</password>
+        <database>appleAppComments</database>
+    </mysql>
+</sql>
+

@@ -1,0 +1,18 @@
+
+
+--------2018-04-04 10:35:33
+--------update database finished.(single thread)
+--------Update 6839 comments totally!
+--------runtime:694.947517156601s
+
+
+--------2018-04-05 12:54:38
+--------update database finished.(single thread)
+--------Update 6797 comments totally!
+--------runtime:610.7984035015106s
+
+
+--------2018-04-07 12:40:04
+--------update database finished.(single thread)
+--------Update 11681 comments totally!
+--------runtime:695.1812446117401s
