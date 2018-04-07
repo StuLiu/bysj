@@ -52,7 +52,7 @@ class CommentDbHandler(object):
             self.db.commit()
         except pymysql.IntegrityError:
             self.db.rollback()
-            print('The comment is existing!')
+            # print('The comment is existing!')
         except:
             self.db.rollback()
             print('Insert error! Fail to insert the comment.')

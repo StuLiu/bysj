@@ -50,7 +50,7 @@ class XlsxToDb(object):
         # 打印字典数据个数
         print('Total:%d' % len(comments_list))
 
-    # 将input目录下所有已标记xlsx文件的评论导入到数据  库
+    # 将input目录下所有已标记xlsx文件的评论导入到数据库
     def executeAllApp(self):
         appList = list(self.dbHandler.getApps())
         print(len(appList))
