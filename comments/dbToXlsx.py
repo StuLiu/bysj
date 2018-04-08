@@ -68,7 +68,7 @@ class DbToXlsx(object):
 
     # export comments to several xlsx files named by app_id-app_name
     # multi thread
-    def exportCommentsByApp(self):
+    def exportCommentsEachApp(self):
         # create output dir
         currTime = time.localtime(time.time())  # get current time
         dirPath = "./output/" + str(currTime.tm_year) + "_" + str(currTime.tm_mon) + "_" +\
@@ -96,7 +96,7 @@ if __name__ == '__main__':
     obj = DbToXlsx()
     try:
         fr = time.time()
-        obj.exportCommentsByApp()
+        obj.exportCommentsEachApp()
         to = time.time()
         logTexts.append('runtime:' + str(to - fr) + 's')
         print(logTexts)

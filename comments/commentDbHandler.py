@@ -94,6 +94,15 @@ class CommentDbHandler(object):
         else:
             return self.cursor.fetchall()
 
+    def querySignedComments(self):
+        sql = "SELECT * FROM SIGNEDCOMMENTS NATURAL JOIN APPLEAPP"
+        try:
+            self.cursor.execute(sql)
+        except Exception:
+            return None
+        else:
+            return self.cursor.fetchall()
+
     def insertApps(self,app):
         sql = "Insert INTO APPLEAPP VALUES (%s,%s)"
         param = tuple(app)
@@ -114,4 +123,4 @@ class CommentDbHandler(object):
         print('\nClose database successfully!')
 
 if __name__ == '__main__':
-    print(CommentDbHandler('127.0.0.1','root','123456','appleAppComments').getApps())
+    print(CommentDbHandler('127.0.0.1','root','123456','appleAppComments').querySignedComments())
