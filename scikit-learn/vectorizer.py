@@ -22,7 +22,7 @@ class Vectorizer(object):
         :param comment_rating:  评分等级
         :return vectorizedComment: 向量化后的评论向量
         """
-        punctuation = r'[！!、，,。.：: ；;？?‘\' ’“ \"” ——（ ）\(\)【】\[\]\{\}……\-~`·》《<>]'
+        punctuation = r'[！!、，,。：: ；;？?‘\' ’“ \"” ——（ ）\(\)【】\[\]\{\}……\-~`·》《<>]'
         content_w_counter = len(re.findall(punctuation, comment_content))   #计算标点符号数量
         print("content_w_counter",content_w_counter)
         space = r'[\s]'
