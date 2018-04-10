@@ -6,12 +6,20 @@
 """
 print(__doc__)
 import re
-import jieba.posseg
-class Vectorizer(object):
 
+import jieba.posseg
+
+import config
+import os
+
+class Vectorizer(object):
+    """
+    向量化评论文本数据
+    """
     def __init__(self):
-        jieba.load_userdict("data/dict/user_defined_dict.txt")
-        jieba.load_userdict("data/dict/sogoupinyin_dict.txt")
+
+        jieba.load_userdict(os.path.join(config.DICT_PATH,"user_defined_dict.txt"))
+        jieba.load_userdict(os.path.join(config.DICT_PATH,"sogoupinyin_dict.txt"))
 
 
     def vectoring(self, comment_id, comment_title, comment_content, comment_rating):
@@ -22,14 +30,11 @@ class Vectorizer(object):
         :param comment_rating:  评分等级
         :return vectorizedComment: 向量化后的评论向量
         """
-        punctuation = r'[！!、，,。：: ；;？?‘\' ’“ \"” ——（ ）\(\)【】\[\]\{\}……\-~`·》《<>]'
+        punctuation = r'[！!、，,。：:；;？?‘\'’“\"”——（）\(\)【】\[\]\{\}……\-~`·》《<>]'
         content_w_counter = len(re.findall(punctuation, comment_content))   #计算标点符号数量
-        print("content_w_counter",content_w_counter)
         space = r'[\s]'
         words = jieba.posseg.lcut(re.sub(space,'',comment_content,0))   # 去处空白字符再分词
         words_len = len(words)
-        print("wordlen",words_len)
-        print(words)
         content_pl_counter = 0
         content_eng_counter = 0
         content_n_counter = 0
@@ -37,6 +42,8 @@ class Vectorizer(object):
         content_a_counter = 0
         content_x_counter = 0 - content_w_counter   # jieba视标点符号为x类字符，'.'除外
         content_y_counter = 0
+        content_m_counter = 0
+        # print("=" * 30)
         for word, flag in words:
             print('%s %s' % (word, flag))
             if flag == 'pl':
@@ -53,8 +60,20 @@ class Vectorizer(object):
                 content_x_counter += 1
             elif flag == 'y':
                 content_y_counter += 1
+            elif flag == 'm':
+                content_m_counter += 1
             else:
                 pass
+        # print("wordlen", words_len)
+        # print("content_pl_counter", content_pl_counter)
+        # print("content_eng_counter", content_eng_counter)
+        # print("content_n_counter", content_n_counter)
+        # print("content_v_counter", content_v_counter)
+        # print("content_a_counter", content_a_counter)
+        # print("content_x_counter", content_x_counter)
+        # print("content_w_counter", content_w_counter)
+        # print("content_y_counter", content_y_counter)
+        # print("content_m_counter", content_m_counter)
         vectorizedComment = [
             comment_id,
             len(comment_title),
@@ -67,9 +86,10 @@ class Vectorizer(object):
             float(content_x_counter) / words_len,
             float(content_w_counter) / words_len,
             float(content_y_counter) / words_len,
+            float(content_m_counter) / words_len,
             comment_rating
         ]
-        print(vectorizedComment)
+        # print(vectorizedComment)
         return vectorizedComment
 
 if __name__ == '__main__':
