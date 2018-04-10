@@ -136,16 +136,18 @@ def scel2txt(file_name):
     getPyTable(data[startPy:startChinese])
     getChinese(data[startChinese:])
 
+import config
+import os
 if __name__ == '__main__':
 
     # scel所在文件夹路径
-    in_path = "./scel/"
+    in_path = os.path.join(config.RESOURCES_PATH,'scel')
     # 输出词典所在文件夹路径
-    out_path = "./dict/output_dict.txt"
+    out_path = os.path.join(config.DICT_PATH,'output_dict.txt')
 
     fin = [fname for fname in os.listdir(in_path) if fname[-5:] == ".scel"]
     for f in fin:
-        scel2txt(in_path+f)
+        scel2txt(in_path+'\\'+f)
     # print(GTable)
     # 保存结果
     with open(out_path, 'w', encoding='utf8') as f:
