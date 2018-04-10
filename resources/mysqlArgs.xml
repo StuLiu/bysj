@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <sql>
     <mysql>
+        <url>127.0.0.1</url>
         <userName>root</userName>
         <password>123456</password>
         <database>appleAppComments</database>
