@@ -13,7 +13,7 @@ class AppCommentsDbHandler(DbHandler):
     # if insert failed for other reason,raise a Exception
     def insertAppComment(self,sequence):
         # time,comment_id,title,content,voteSum,voteCount,rating,version,user_name,app_id,isSpam
-        sql = "INSERT INTO appcomments_test VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        sql = "INSERT INTO appcomments VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         # sql statement arguments
         param = tuple(sequence)
         # print(param)
@@ -28,7 +28,7 @@ class AppCommentsDbHandler(DbHandler):
             raise Exception('Insert error! Fail to insert the comment.')
 
     def queryAll(self):
-        sql = "SELECT * FROM appcomments_test NATURAL JOIN appleapp"
+        sql = "SELECT * FROM appcomments NATURAL JOIN appleapp"
         try:
             self._cursor.execute(sql)
         except Exception as e:
@@ -38,7 +38,7 @@ class AppCommentsDbHandler(DbHandler):
             return self._cursor.fetchall()
 
     def queryCommentsByAppId(self,appId):
-        sql = "SELECT * FROM appcomments_test NATURAL JOIN appleapp WHERE app_id="+appId
+        sql = "SELECT * FROM appcomments NATURAL JOIN appleapp WHERE app_id="+appId
         try:
             self._cursor.execute(sql)
         except Exception as e:
@@ -46,6 +46,16 @@ class AppCommentsDbHandler(DbHandler):
             return None
         else:
             return self._cursor.fetchall()
+
+    def count(self):
+        sql = "SELECT COUNT(*) FROM appcomments"
+        try:
+            self._cursor.execute(sql)
+        except Exception as e:
+            print("count appcomments error!", e)
+            return None
+        else:
+            return self._cursor.fetchone()[0]
 
 if __name__ == "__main__":
     handler = AppCommentsDbHandler()
@@ -56,4 +66,6 @@ if __name__ == "__main__":
     result = handler.queryAll()
     print(result)
     print(len(result))
+
+    print(handler.count())
 

@@ -1,9 +1,9 @@
 
 import os
 
-PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))      # 源文件目录
+PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))      # 顶层目录bysj/
 
-RESOURCES_PATH = os.path.join(PROJECT_ROOT ,"resources")        #资源目录路径
+RESOURCES_PATH = os.path.join(PROJECT_ROOT ,"resources")        # 资源目录
 
 DICT_PATH = os.path.join(RESOURCES_PATH ,"dict")
 
