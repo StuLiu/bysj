@@ -22,7 +22,7 @@ class WebToDb(object):
     def executeAll(self):
         counter = 0
         appleApps = self.appleAppHandler.queryAll()
-        for appleApp in appleApps[0:5]:
+        for appleApp in appleApps:
             print('\n正在获取苹果应用: %s-%s 的最新评论······' % (appleApp[0],appleApp[1]))
             added = self.executeByAppId(appleApp[0])
             print('新增%d条评论' % added)
