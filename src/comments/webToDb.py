@@ -1,6 +1,10 @@
-####
-#单线程爬虫
-####
+"""
+==============================
+         单线程爬虫脚本
+  从指定网址爬取评论并存入数据库
+==============================
+"""
+print(__doc__)
 
 import re
 import time
@@ -11,17 +15,17 @@ from database.apple_app_dbHandler import AppleAppDbHandler
 class WebToDb(object):
 
     def __init__(self):
-        self.headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; …) Gecko/20100101 Firefox/57.0'}
-        self.pattern = re.compile('<entry>.*?<updated>(.*?)</updated>.*?<id>(.*?)</id>.*?'
+        self.__headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; …) Gecko/20100101 Firefox/57.0'}
+        self.__pattern = re.compile('<entry>.*?<updated>(.*?)</updated>.*?<id>(.*?)</id>.*?'
             '<title>(.*?)</title>.*?<content.*?>(.*?)</content>.*?<im:voteSum>(.*?)</im:voteSum>.*?'
             '<im:voteCount>(.*?)</im:voteCount>.*?<im:rating>(.*?)</im:rating>.*?'
             '<im:version>(.*?)</im:version>.*?<name>(.*?)</name>', re.M | re.S)
-        self.appCommentsHandler = AppCommentsDbHandler()
-        self.appleAppHandler = AppleAppDbHandler()
+        self.__appCommentsHandler = AppCommentsDbHandler()
+        self.__appleAppHandler = AppleAppDbHandler()
 
     def executeAll(self):
         counter = 0
-        appleApps = self.appleAppHandler.queryAll()
+        appleApps = self.__appleAppHandler.queryAll()
         for appleApp in appleApps:
             print('\n正在获取苹果应用: %s-%s 的最新评论······' % (appleApp[0],appleApp[1]))
             added = self.executeByAppId(appleApp[0])
@@ -30,12 +34,12 @@ class WebToDb(object):
         return counter
 
     def executeByAppId(self,appId):
-        count_before = self.appCommentsHandler.count()
+        count_before = self.__appCommentsHandler.count()
         # get comment entries from page 1 to 10
         for currPage in range(1, 11):
             url = "https://itunes.apple.com/rss/customerreviews/page=" + str(currPage) + \
                   "/id=" + str(appId) + "/sortby=mostrecent/xml?l=en&&cc=cn"
-            spider = MySpider(url, self.headers, self.pattern)
+            spider = MySpider(url, self.__headers, self.__pattern)
             comments = spider.getMsgs()
             try:
                 # insert comment entries from current website page one by one
@@ -44,7 +48,7 @@ class WebToDb(object):
                     commentItemList.append(appId)       # app_id
                     commentItemList.append(str(''))     # isSpam
                     try:
-                        self.appCommentsHandler.insertAppComment(commentItemList)
+                        self.__appCommentsHandler.insertAppComment(commentItemList)
                     except UserWarning:
                         raise UserWarning('Outdated comments!')
                     except Exception as errStr:
@@ -52,7 +56,7 @@ class WebToDb(object):
             except (Exception,UserWarning) as errStr:
                 print(errStr,'Update next app\'s comment!')
                 break
-        count_after = self.appCommentsHandler.count()
+        count_after = self.__appCommentsHandler.count()
         return count_after - count_before
 
 if __name__ == '__main__':

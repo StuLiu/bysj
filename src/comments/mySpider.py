@@ -10,16 +10,16 @@ import re
 class MySpider(object):
     "getting page and items from website 'url' rule by regular expression 'pattern'."
     def __init__(self,url,headers,pattern):
-        self.url = url
-        self.headers= headers
-        self.pattern = pattern
+        self.__url = url
+        self.__headers= headers
+        self.__pattern = pattern
 
 
     # return the website source code formatted by unicode
     def getPage(self):
         try:
             # print("getting website content......" + "from " + self.url)
-            request = urllib.request.Request(url=self.url)#, headers=self.headers)
+            request = urllib.request.Request(url=self.__url)#, headers=self.headers)
             response = urllib.request.urlopen(request)
             page = response.read().decode('utf-8')  # get source code
         except Exception as errStr:
@@ -33,7 +33,7 @@ class MySpider(object):
     def getMsgs(self):
         page = self.getPage()
         # print("get entries ......")
-        msgs = re.findall(self.pattern, page)
+        msgs = re.findall(self.__pattern, page)
         # print("get entries finished")
         return msgs
 

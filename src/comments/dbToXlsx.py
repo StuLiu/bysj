@@ -11,20 +11,20 @@ class ThreadExportCommentOfOneApp(threading.Thread):
 
     def __init__(self, threadID, app, path, dbhandler):
         threading.Thread.__init__(self)
-        self.threadID = threadID
-        self.app = app
-        self.path = path
-        self.dbhandler = dbhandler
+        self.__threadID = threadID
+        self.__app = app
+        self.__path = path
+        self.__dbhandler = dbhandler
 
 
     def run(self):
         # get comments from db and save them to app_id-app_name.xlsx
-        print('query %s\'s comments......' % (self.app[1]))
+        print('query %s\'s comments......' % (self.__app[1]))
         lock.acquire()
-        comments = self.dbhandler.queryCommentsByAppId(self.app[0])
+        comments = self.__dbhandler.queryCommentsByAppId(self.__app[0])
         lock.release()
         # print('run', comments)
-        xlsxFileName = os.path.join(self.path, self.app[0] + "_" + self.app[1] + ".xlsx")
+        xlsxFileName = os.path.join(self.__path, self.__app[0] + "_" + self.__app[1] + ".xlsx")
         wb = Workbook()
         ws = wb.active
         # app_id,time,comment_id,title,content,voteSum,voteCount,rating,version,user_name,isSpam,app_name
@@ -35,14 +35,14 @@ class ThreadExportCommentOfOneApp(threading.Thread):
         for comment in comments:
             ws.append(comment)
         wb.save(filename = xlsxFileName)
-        print('save %s finished,total %d comments.\n' % (self.app[1], len(comments)))
+        print('save %s finished,total %d comments.\n' % (self.__app[1], len(comments)))
 
 class DbToXlsx(object):
 
     def __init__(self):
         # connet to database
-        self.appCommentsHandler = AppCommentsDbHandler()
-        self.appleAppHandler = AppleAppDbHandler()
+        self.__appCommentsHandler = AppCommentsDbHandler()
+        self.__appleAppHandler = AppleAppDbHandler()
 
     def exportAllComments(self):
         currTime = time.localtime(time.time())
@@ -50,7 +50,7 @@ class DbToXlsx(object):
                        "_" + str(currTime.tm_mday) + "_" + str(currTime.tm_hour) +\
                        "_" + str(currTime.tm_min) + "_" + str(currTime.tm_sec) + '.xlsx'
         filePath = os.path.join(config.RESOURCES_PATH,'output',xlsxFileName)
-        comments = self.appCommentsHandler.queryAll()
+        comments = self.__appCommentsHandler.queryAll()
 
         wb = Workbook()
         ws = wb.active
@@ -73,12 +73,12 @@ class DbToXlsx(object):
                   "_" + str(currTime.tm_sec) + 'xlsx'
         dirPath = os.path.join(config.RESOURCES_PATH, 'output', dirName)
         os.mkdir(dirPath)
-        appTuple = self.appleAppHandler.queryAll()  # ((app_id,app_name),(app_id,app_name),...)
+        appTuple = self.__appleAppHandler.queryAll()  # ((app_id,app_name),(app_id,app_name),...)
 
         threads = []
         for i in range(len(appTuple)):
             print(appTuple[i])
-            myThread = ThreadExportCommentOfOneApp(i,appTuple[i],dirPath,self.appCommentsHandler)
+            myThread = ThreadExportCommentOfOneApp(i,appTuple[i],dirPath,self.__appCommentsHandler)
             threads.append(myThread)
         for thread in threads:
             thread.start()

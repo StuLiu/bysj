@@ -15,8 +15,8 @@ from database.apple_app_dbHandler import AppleAppDbHandler
 class XlsxToDb(object):
 
     def __init__(self):
-        self._signedCommentsDbHandler = SignedCommentsDbHandler()
-        self._appleAppHandler = AppleAppDbHandler()
+        self.__signedCommentsDbHandler = SignedCommentsDbHandler()
+        self.__appleAppHandler = AppleAppDbHandler()
 
     # 将input目录下某个xlsx文件的评论导入到数据库
     def executeOneApp(self, fileName):
@@ -46,7 +46,7 @@ class XlsxToDb(object):
             for col in range(2,12):
                 temp_list.append( ws.cell(row=row, column=col).value )
             temp_list.insert(9,appId)
-            self._signedCommentsDbHandler.insertSignedComment(temp_list)
+            self.__signedCommentsDbHandler.insertSignedComment(temp_list)
             comments_list.append(temp_list)
 
         # 打印字典数据个数
@@ -54,7 +54,7 @@ class XlsxToDb(object):
 
     # 将input目录下所有已标记xlsx文件的评论导入到数据库
     def executeAllApp(self):
-        appList = list(self._appleAppHandler.queryAll())
+        appList = list(self.__appleAppHandler.queryAll())
         print(len(appList))
         for app in appList:
             self.executeOneApp(app[0]+"_"+app[1]+".xlsx")
