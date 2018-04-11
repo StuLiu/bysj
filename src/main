@@ -6,17 +6,10 @@
 print(__doc__)
 
 import sys
-import random
-import numpy as np
-from sklearn.linear_model import LogisticRegression
-from sklearn.neighbors import KNeighborsClassifier
-from database.vectorized_comments_dbHandler import VectorizedCommentsDbHandler
-from sklearn.neural_network import MLPClassifier
-from sklearn.metrics import classification_report,confusion_matrix
-
-np.set_printoptions(threshold=1000)
 MAX_INT = sys.maxsize
 
+import numpy as np
+np.set_printoptions(threshold=1000)
 
 class MLData(object):
     x_train = []
@@ -24,6 +17,8 @@ class MLData(object):
     x_test = []
     y_test = []
 
+import random
+from database.vectorized_comments_dbHandler import VectorizedCommentsDbHandler
 def load_data():
     ml_data = MLData()
     vcDbHandler = VectorizedCommentsDbHandler()
@@ -47,6 +42,11 @@ def load_data():
     ml_data.y_test = np.array(y_test)
     return ml_data
 
+from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neural_network import MLPClassifier
+from sklearn.svm import SVC
+from sklearn.metrics import classification_report
 if __name__ == "__main__":
 
     data = load_data()
@@ -77,3 +77,11 @@ if __name__ == "__main__":
                        verbose=0, warm_start=False)
     logistic.fit(data.x_train, data.y_train)
     print('LogisticRegression\n',classification_report(data.y_test, logistic.predict(data.x_test)))
+
+    svc = SVC(gamma=0.001, C=100.)
+    SVC(C=100.0, cache_size=200, class_weight=None, coef0=0.0,
+        decision_function_shape='ovr', degree=3, gamma=0.001, kernel='rbf',
+        max_iter=-1, probability=False, random_state=None, shrinking=True,
+        tol=0.001, verbose=False)
+    svc.fit(data.x_train, data.y_train)
+    print('SVM\n', classification_report(data.y_test, svc.predict(data.x_test)))
