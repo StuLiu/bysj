@@ -1,0 +1,79 @@
+"""
+================================
+         机器学习训练脚本
+================================
+"""
+print(__doc__)
+
+import sys
+import random
+import numpy as np
+from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
+from database.vectorized_comments_dbHandler import VectorizedCommentsDbHandler
+from sklearn.neural_network import MLPClassifier
+from sklearn.metrics import classification_report,confusion_matrix
+
+np.set_printoptions(threshold=1000)
+MAX_INT = sys.maxsize
+
+
+class MLData(object):
+    x_train = []
+    y_train = []
+    x_test = []
+    y_test = []
+
+def load_data():
+    ml_data = MLData()
+    vcDbHandler = VectorizedCommentsDbHandler()
+    notSpamData = list(vcDbHandler.queryNotSpam(15000))
+    spamData = list(vcDbHandler.querySpam(15000))
+    print(len(notSpamData),len(spamData))
+    random.shuffle(notSpamData)
+    random.shuffle(spamData)
+    trainData = list( notSpamData[:int(.9 * len(notSpamData))] + spamData[:int(.9 * len(spamData))] )
+    testData = list( notSpamData[int(.9 * len(notSpamData)):] + spamData[int(.9 * len(spamData)):] )
+    x_train, y_train, x_test, y_test = [], [], [], []
+    for traind in trainData:
+        x_train.append(traind[1:-1])
+        y_train.append(traind[-1])
+    for testd in testData:
+        x_test.append(testd[1:-1])
+        y_test.append(testd[-1])
+    ml_data.x_train = np.array(x_train)
+    ml_data.y_train = np.array(y_train)
+    ml_data.x_test = np.array(x_test)
+    ml_data.y_test = np.array(y_test)
+    return ml_data
+
+if __name__ == "__main__":
+
+    data = load_data()
+    print("load data finished!")
+
+    mlp = MLPClassifier(hidden_layer_sizes=(10, 10, 10), max_iter=50000)
+    MLPClassifier(activation='relu', alpha=0.0001, batch_size='auto', beta_1=0.9,
+                  beta_2=0.999, early_stopping=False, epsilon=1e-08,
+                  hidden_layer_sizes=(10, 10, 10), learning_rate='constant',
+                  learning_rate_init=0.001, max_iter=50000, momentum=0.9,
+                  nesterovs_momentum=True, power_t=0.5, random_state=None,
+                  shuffle=True, solver='adam', tol=0.0001, validation_fraction=0.1,
+                  verbose=False, warm_start=False)
+    mlp.fit(data.x_train, data.y_train)
+    print('neural_network\n',classification_report(data.y_test, mlp.predict(data.x_test)))
+
+    knn = KNeighborsClassifier()
+    KNeighborsClassifier(algorithm='auto', leaf_size=30, metric='minkowski',
+                         metric_params=None, n_jobs=1, n_neighbors=5, p=2,
+                         weights='uniform')
+    knn.fit(data.x_train, data.y_train)
+    print('KNN\n',classification_report(data.y_test, knn.predict(data.x_test)))
+
+    logistic = LogisticRegression()
+    LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,
+                       intercept_scaling=1, max_iter=100, multi_class='ovr', n_jobs=1,
+                       penalty='l2', random_state=None, solver='liblinear', tol=0.0001,
+                       verbose=0, warm_start=False)
+    logistic.fit(data.x_train, data.y_train)
+    print('LogisticRegression\n',classification_report(data.y_test, logistic.predict(data.x_test)))
