@@ -1,10 +1,4 @@
 
-"""
-======================
-   向量化评论文本数据
-======================
-"""
-print(__doc__)
 import re
 
 import jieba.posseg
@@ -17,7 +11,7 @@ class Vectorizer(object):
     向量化评论文本数据
     """
     def __init__(self):
-
+        # jieba导入自定义词典
         jieba.load_userdict(os.path.join(config.DICT_PATH,"user_defined_dict.txt"))
         jieba.load_userdict(os.path.join(config.DICT_PATH,"sogoupinyin_dict.txt"))
 
