@@ -57,6 +57,7 @@ class AppCommentsDbHandler(DbHandler):
         else:
             return self._cursor.fetchone()[0]
 
+
 if __name__ == "__main__":
     handler = AppCommentsDbHandler()
     # handler.insertAppComment([
@@ -64,7 +65,7 @@ if __name__ == "__main__":
     # ])
 
     result = handler.queryAll()
-    print(result)
+    # print(result)
     print(len(result))
 
     print(handler.count())
