@@ -6,6 +6,7 @@ import config
 from openpyxl import Workbook
 from database.app_comments_dbHandler import AppCommentsDbHandler
 from database.apple_app_dbHandler import AppleAppDbHandler
+from database.signed_comments_dbHandler import SignedCommentsDbHandler
 
 class ThreadExportCommentOfOneApp(threading.Thread):
 
@@ -43,6 +44,7 @@ class DbToXlsx(object):
         # connet to database
         self.__appCommentsHandler = AppCommentsDbHandler()
         self.__appleAppHandler = AppleAppDbHandler()
+        self.__signedCommentsDbHandler = SignedCommentsDbHandler()
 
     def exportAllComments(self):
         currTime = time.localtime(time.time())
@@ -85,13 +87,32 @@ class DbToXlsx(object):
         for thread in threads:
             thread.join()
 
+    def exportSignedCommentsEachApp(self):
+        # create output dir
+        currTime = time.localtime(time.time())  # get current time
+        dirName = str(currTime.tm_year) + "_" + str(currTime.tm_mon) + "_" +\
+                  str(currTime.tm_mday) + "_" + str(currTime.tm_hour) + "_" + str(currTime.tm_min) +\
+                  "_" + str(currTime.tm_sec) + 'Signedxlsx'
+        dirPath = os.path.join(config.RESOURCES_PATH, 'output', dirName)
+        os.mkdir(dirPath)
+        appTuple = self.__appleAppHandler.queryAll()  # ((app_id,app_name),(app_id,app_name),...)
+
+        threads = []
+        for i in range(len(appTuple)):
+            print(appTuple[i])
+            myThread = ThreadExportCommentOfOneApp(i,appTuple[i],dirPath,self.__signedCommentsDbHandler)
+            threads.append(myThread)
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join()
 
 if __name__ == '__main__':
     lock = threading.Lock()
     try:
         fr = time.time()
-        # DbToXlsx().exportAllComments()
-        DbToXlsx().exportCommentsEachApp()
+        DbToXlsx().exportSignedCommentsEachApp()
+        # DbToXlsx().exportCommentsEachApp()
         to = time.time()
     except Exception as e:
         print(e)
