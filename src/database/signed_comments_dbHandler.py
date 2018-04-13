@@ -33,6 +33,16 @@ class SignedCommentsDbHandler(DbHandler):
         else:
             return self._cursor.fetchall()
 
+    def queryCommentsByAppId(self,appId):
+        sql = "SELECT * FROM signedcomments NATURAL JOIN appleapp WHERE app_id="+appId
+        try:
+            self._cursor.execute(sql)
+        except Exception as e:
+            print("query appcomments error!", e)
+            return None
+        else:
+            return self._cursor.fetchall()
+
 if __name__ == "__main__":
     handler = SignedCommentsDbHandler()
 
