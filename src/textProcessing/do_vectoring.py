@@ -8,11 +8,12 @@
 """
 print(__doc__)
 
-from database.vectorized_comments_dbHandler import VectorizedCommentsDbHandler
-from database.signed_comments_dbHandler import SignedCommentsDbHandler
-from scikitLearn.vectorizer import Vectorizer
-
 import time
+
+from database.signed_comments_dbHandler import SignedCommentsDbHandler
+from database.vectorized_comments_dbHandler import VectorizedCommentsDbHandler
+from textProcessing.vectorizer import Vectorizer
+
 if __name__ == "__main__":
     fr = time.time()
     # 已标注评论数据库表的操作对象

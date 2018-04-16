@@ -1,14 +1,34 @@
 
+
 import re
 
 import jieba.posseg
-
 import config
 import os
 
+from sklearn.feature_extraction.text import CountVectorizer,TfidfTransformer
+def tf_idf_vectoring(content_array):
+    """
+    :param content_array: 评论文本数组
+    :return: 根据tf-idf方法向量化后的矩阵
+    """
+    countVectorizer = CountVectorizer()
+    x_counts = countVectorizer.fit_transform(content_array)
+    tfidf_transformer = TfidfTransformer()
+    x_tfidf = tfidf_transformer.fit_transform(x_counts)
+    print("TfidfTransform finished,result shape:",x_tfidf.shape)
+    return x_tfidf
+
+
+
 class Vectorizer(object):
     """
-    向量化评论文本数据
+    ====================================
+        Vectorizer：自定义文本向量化类
+    ====================================
+        根据数据总结出：评论id长度、评论长度、‘评论词’比例、英文所占比例、
+    名词所占比例、动词所占比例、形容词所占比例、emoji和特殊字符所占比例、
+    感叹词所占比例、数字和量词所占比例、评论等级等数据为评论文本特征。
     """
     def __init__(self):
         # jieba导入自定义词典
@@ -37,7 +57,6 @@ class Vectorizer(object):
         content_x_counter = 0 - content_w_counter   # jieba视标点符号为x类字符，'.'除外
         content_y_counter = 0
         content_m_counter = 0
-        # print("=" * 30)
         for word, flag in words:
             print('%s %s' % (word, flag))
             if flag == 'pl':
@@ -58,16 +77,6 @@ class Vectorizer(object):
                 content_m_counter += 1
             else:
                 pass
-        # print("wordlen", words_len)
-        # print("content_pl_counter", content_pl_counter)
-        # print("content_eng_counter", content_eng_counter)
-        # print("content_n_counter", content_n_counter)
-        # print("content_v_counter", content_v_counter)
-        # print("content_a_counter", content_a_counter)
-        # print("content_x_counter", content_x_counter)
-        # print("content_w_counter", content_w_counter)
-        # print("content_y_counter", content_y_counter)
-        # print("content_m_counter", content_m_counter)
         vectorizedComment = [
             comment_id,
             len(comment_title),
@@ -106,5 +115,5 @@ if __name__ == '__main__':
     for content in contents:
         vectorizer.vectoring("comment_id","comment_title",content,0)
 
-
+    tf_idf_vectoring(contents)
 
