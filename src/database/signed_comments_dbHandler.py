@@ -33,6 +33,26 @@ class SignedCommentsDbHandler(DbHandler):
         else:
             return self._cursor.fetchall()
 
+    def querySpam(self):
+        sql = "SELECT * FROM signedcomments WHERE isSpam=1"
+        try:
+            self._cursor.execute(sql)
+        except Exception as e:
+            print("qurey error!",e)
+            return None
+        else:
+            return self._cursor.fetchall()
+
+    def queryNotSpam(self):
+        sql = "SELECT * FROM signedcomments WHERE isSpam=0"
+        try:
+            self._cursor.execute(sql)
+        except Exception as e:
+            print("qurey error!",e)
+            return None
+        else:
+            return self._cursor.fetchall()
+
     def queryCommentsByAppId(self,appId):
         sql = "SELECT * FROM signedcomments NATURAL JOIN appleapp WHERE app_id="+appId
         try:
