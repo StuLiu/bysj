@@ -8,7 +8,7 @@ from sklearn.linear_model import LinearRegression,LogisticRegression,\
     ElasticNet, BayesianRidge, PassiveAggressiveRegressor, HuberRegressor, \
     TheilSenRegressor, RANSACRegressor
 from sklearn.kernel_ridge import KernelRidge
-from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neighbors import KNeighborsClassifier,KNeighborsRegressor
 from sklearn.neural_network import MLPClassifier
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.svm import SVC, SVR
@@ -36,21 +36,22 @@ def get_classifiers():
             oob_score=False, n_jobs=1, random_state=1427, verbose=0, warm_start=False),
         'PLSRegression' : PLSRegression(n_components=2, scale=True, max_iter=500,
             tol=1e-06, copy=True),
-        'KNeighborsRegressor(weights=uniform, n_neighbors=16)' : KNeighborsClassifier(
+        'KNeighborsRegressor(weights=uniform, n_neighbors=16)' : KNeighborsRegressor(
             algorithm='auto', leaf_size=30, metric='minkowski',
             metric_params=None, n_jobs=1, n_neighbors=16, p=2, weights='uniform'),
-        'KNeighborsRegressor(weights=distance, n_neighbors=16)' : KNeighborsClassifier(
+        'KNeighborsRegressor(weights=distance, n_neighbors=16)' : KNeighborsRegressor(
             algorithm='auto', leaf_size=30, metric='minkowski',
             metric_params=None, n_jobs=1, n_neighbors=16, p=2, weights='distance'),
         'GradientBoostingRegressor' : GradientBoostingRegressor(),
         'LinearRegression' : LinearRegression(),
         'ElasticNet' : ElasticNet(),
-        'BayesianRidge' : BayesianRidge(),
-        # 'KernelRidge' : KernelRidge(),
+        'BayesianRidge' : BayesianRidge(n_iter=300, tol=0.001, alpha_1=1e-06,
+            alpha_2=1e-06, lambda_1=1e-06, lambda_2=1e-06, compute_score=False,
+            fit_intercept=True, normalize=False, copy_X=True, verbose=False),
+        # 'KernelRidge' : KernelRidge(alpha=1, kernel='linear', gamma=None, degree=3, coef0=1, kernel_params=None),
         'PassiveAggressiveRegressor' : PassiveAggressiveRegressor(),
         'HuberRegressor' : HuberRegressor(),
         'TheilSenRegressor' : TheilSenRegressor(),
-        'RANSACRegressor' : RANSACRegressor(),
         'MLP': MLPClassifier(activation='relu', alpha=0.0001, batch_size='auto', beta_1=0.9,
             beta_2=0.999, early_stopping=False, epsilon=1e-08,
             hidden_layer_sizes=(10, 10, 10), learning_rate='constant',
