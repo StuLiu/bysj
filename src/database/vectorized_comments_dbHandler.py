@@ -10,9 +10,11 @@ class VectorizedCommentsDbHandler(DbHandler):
         DbHandler.__del__(self)
 
     def insertVectorizedComment(self,sequence):
-        sql = "INSERT INTO vectorizedcomments VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        sql = "INSERT INTO vectorizedcomments VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s," \
+              "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s," \
+              "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         # sql statement arguments
-        if len(sequence) != 13:
+        if len(sequence) != 53:
             print("insertVectorizedComment parameter error!")
             return
         param = tuple(sequence)
@@ -25,19 +27,7 @@ class VectorizedCommentsDbHandler(DbHandler):
             print("insertVectorizedComment error!",e)
 
     def queryAll(self):
-        sql = "SELECT vectorizedcomments.comment_id, " \
-              "vectorizedcomments.title_len, " \
-              "vectorizedcomments.content_len, " \
-              "vectorizedcomments.content_pl_rate, " \
-              "vectorizedcomments.content_eng_rate, " \
-              "vectorizedcomments.content_n_rate, " \
-              "vectorizedcomments.content_v_rate, " \
-              "vectorizedcomments.content_a_rate, " \
-              "vectorizedcomments.content_x_rate, " \
-              "vectorizedcomments.content_w_rate, " \
-              "vectorizedcomments.content_y_rate, " \
-              "vectorizedcomments.content_m_rate, " \
-              "vectorizedcomments.comment_rating, " \
+        sql = "SELECT vectorizedcomments.*, " \
               "signedcomments.isSpam " \
               "FROM vectorizedcomments NATURAL JOIN signedcomments"
         try:
@@ -48,23 +38,36 @@ class VectorizedCommentsDbHandler(DbHandler):
         else:
             return self._cursor.fetchall()
 
-    def query(self,limit):
-        sql = "SELECT vectorizedcomments.comment_id, " \
-              "vectorizedcomments.title_len, " \
-              "vectorizedcomments.content_len, " \
-              "vectorizedcomments.content_pl_rate, " \
-              "vectorizedcomments.content_eng_rate, " \
-              "vectorizedcomments.content_n_rate, " \
-              "vectorizedcomments.content_v_rate, " \
-              "vectorizedcomments.content_a_rate, " \
-              "vectorizedcomments.content_x_rate, " \
-              "vectorizedcomments.content_w_rate, " \
-              "vectorizedcomments.content_y_rate, " \
-              "vectorizedcomments.content_m_rate, " \
-              "vectorizedcomments.comment_rating, " \
+    # def query(self,limit):
+    #     sql = "SELECT vectorizedcomments.comment_id, " \
+    #           "vectorizedcomments.title_len, " \
+    #           "vectorizedcomments.content_len, " \
+    #           "vectorizedcomments.content_pl_rate, " \
+    #           "vectorizedcomments.content_eng_rate, " \
+    #           "vectorizedcomments.content_n_rate, " \
+    #           "vectorizedcomments.content_v_rate, " \
+    #           "vectorizedcomments.content_a_rate, " \
+    #           "vectorizedcomments.content_x_rate, " \
+    #           "vectorizedcomments.content_w_rate, " \
+    #           "vectorizedcomments.content_y_rate, " \
+    #           "vectorizedcomments.content_m_rate, " \
+    #           "vectorizedcomments.comment_rating, " \
+    #           "signedcomments.isSpam " \
+    #           "FROM vectorizedcomments NATURAL JOIN signedcomments " \
+    #           "limit "+str(limit)
+    #     try:
+    #         self._cursor.execute(sql)
+    #     except Exception as e:
+    #         print("query VecterizedComment error!", e)
+    #         return None
+    #     else:
+    #         return self._cursor.fetchall()
+
+    def querySpam(self):
+        sql = "SELECT vectorizedcomments.*, " \
               "signedcomments.isSpam " \
               "FROM vectorizedcomments NATURAL JOIN signedcomments " \
-              "limit "+str(limit)
+              "WHERE signedcomments.isSpam='1'"
         try:
             self._cursor.execute(sql)
         except Exception as e:
@@ -73,50 +76,11 @@ class VectorizedCommentsDbHandler(DbHandler):
         else:
             return self._cursor.fetchall()
 
-    def querySpam(self,limit):
-        sql = "SELECT vectorizedcomments.comment_id, " \
-              "vectorizedcomments.title_len, " \
-              "vectorizedcomments.content_len, " \
-              "vectorizedcomments.content_pl_rate, " \
-              "vectorizedcomments.content_eng_rate, " \
-              "vectorizedcomments.content_n_rate, " \
-              "vectorizedcomments.content_v_rate, " \
-              "vectorizedcomments.content_a_rate, " \
-              "vectorizedcomments.content_x_rate, " \
-              "vectorizedcomments.content_w_rate, " \
-              "vectorizedcomments.content_y_rate, " \
-              "vectorizedcomments.content_m_rate, " \
-              "vectorizedcomments.comment_rating, " \
+    def queryNotSpam(self):
+        sql = "SELECT vectorizedcomments.*, " \
               "signedcomments.isSpam " \
               "FROM vectorizedcomments NATURAL JOIN signedcomments " \
-              "WHERE signedcomments.isSpam='1' " \
-              "limit "+str(limit)
-        try:
-            self._cursor.execute(sql)
-        except Exception as e:
-            print("query VecterizedComment error!", e)
-            return None
-        else:
-            return self._cursor.fetchall()
-
-    def queryNotSpam(self,limit):
-        sql = "SELECT vectorizedcomments.comment_id, " \
-              "vectorizedcomments.title_len, " \
-              "vectorizedcomments.content_len, " \
-              "vectorizedcomments.content_pl_rate, " \
-              "vectorizedcomments.content_eng_rate, " \
-              "vectorizedcomments.content_n_rate, " \
-              "vectorizedcomments.content_v_rate, " \
-              "vectorizedcomments.content_a_rate, " \
-              "vectorizedcomments.content_x_rate, " \
-              "vectorizedcomments.content_w_rate, " \
-              "vectorizedcomments.content_y_rate, " \
-              "vectorizedcomments.content_m_rate, " \
-              "vectorizedcomments.comment_rating, " \
-              "signedcomments.isSpam " \
-              "FROM vectorizedcomments NATURAL JOIN signedcomments " \
-              "WHERE signedcomments.isSpam='0' " \
-              "limit "+str(limit)
+              "WHERE signedcomments.isSpam='0' "
         try:
             self._cursor.execute(sql)
         except Exception as e:
@@ -127,7 +91,14 @@ class VectorizedCommentsDbHandler(DbHandler):
 
 if __name__ == "__main__":
     handler = VectorizedCommentsDbHandler()
-    print(handler.queryNotSpam(10))
+    print(type(handler.querySpam()[0][-1]))
+    # handler.insertVectorizedComment(['22222',1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0
+    #                                     , 1.0, 1.0, 1.0, 1.0, 1.0,1.0,1.0,1.0,1.0,1.0
+    #                                     , 1.0, 1.0, 1.0, 1.0, 1.0,1.0,1.0,1.0,1.0,1.0
+    #                                     , 1.0, 1.0, 1.0, 1.0, 1.0,1.0,1.0,1.0,1.0,1.0
+    #                                     , 1.0, 1.0, 1.0, 1.0, 1.0,1.0,1.0,1.0,1.0,1.0
+    #                                  ,1.0,1.0])
+    # print(handler.queryNotSpam(10))
     # print(handler.query(5))
     # print(handler.queryAll())
     # handler.insertVectorizedComment([

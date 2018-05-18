@@ -54,7 +54,9 @@ class SignedCommentsDbHandler(DbHandler):
             return self._cursor.fetchall()
 
     def queryCommentsByAppId(self,appId):
-        sql = "SELECT * FROM signedcomments NATURAL JOIN appleapp WHERE app_id="+appId
+        sql = "SELECT * FROM signedcomments NATURAL JOIN appleapp " \
+              "WHERE signedcomments.app_id='{}'".format((appId))
+        # print(sql)
         try:
             self._cursor.execute(sql)
         except Exception as e:
@@ -63,10 +65,53 @@ class SignedCommentsDbHandler(DbHandler):
         else:
             return self._cursor.fetchall()
 
+    def queryCommentsByUserName(self,userName):
+        sql = "SELECT * FROM signedcomments " \
+              "WHERE user_name='{}'".format(userName)
+        try:
+            self._cursor.execute(sql)
+        except Exception as e:
+            print("query appcomments error!", e)
+            return None
+        else:
+            return self._cursor.fetchall()
+
+    def countByUserName(self,userName):
+        sql = "SELECT COUNT(*) FROM signedcomments " \
+              "WHERE signedcomments.user_name='{}'".format(userName)
+        try:
+            self._cursor.execute(sql)
+        except Exception as e:
+            print("query appcomments error!", e)
+            return None
+        else:
+            return self._cursor.fetchone()[0]
+
+    def contentIsUnique(self,content):
+        sql = "SELECT COUNT(*) FROM signedcomments " \
+              "WHERE signedcomments.content='{}'".format(content)
+        try:
+            self._cursor.execute(sql)
+        except Exception as e:
+            print("query appcomments error!", e)
+            return None
+        else:
+            if self._cursor.fetchone()[0] > 1:
+                return 0
+            else:
+                return 1
+
+
 if __name__ == "__main__":
     handler = SignedCommentsDbHandler()
 
     # handler.insertSignedComment([
     #     "time","112546","asad","只要一部手机📱，躺在家里也能zuan0🌸💰➕为❤615912134",0,0,5,"v1","myname","1010704842","1"
     # ])
-    print(len(handler.queryAll()))
+    print(handler.countByUserName(u"许飞的亟待解决的报道"))
+    print(handler.countByUserName(u"绿的可能"))
+    print(handler.contentIsUnique(u"快递快递咖啡咖啡咖啡咖啡咖啡咖啡咖啡看"))
+    print(handler.contentIsUnique(u"Air 2的双屏功能能支持就能很好用了"))
+
+    print(handler.queryCommentsByUserName("许飞的亟待解决的报道"))
+    print(handler.queryCommentsByAppId('1118621880'))
