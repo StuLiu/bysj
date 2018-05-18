@@ -1,19 +1,11 @@
-"""
-============================================
-    将标注好的评论文本向量化，并存入数据库
- 1. 从signedcomments表中查询标注好的评论
- 2. 向量化评论
- 3. 向量归一化
- 3. 将归一化的向量插入vectorizedcomments表中
-============================================
-"""
-print(__doc__)
+
 
 import time
 
 from database.signed_comments_dbHandler import SignedCommentsDbHandler
 from database.vectorized_comments_dbHandler import VectorizedCommentsDbHandler
-from textProcessing.vectorizer import Vectorizer
+from database.vectorized_contents_dbHandler import VectorizedContentsDbHandler
+
 import numpy as np
 
 # 特征向量归一化
@@ -36,36 +28,59 @@ def normalizing(arr):
         temp = [str(arr[i][0])]
         for j in range(1, arr.shape[1]):
             # arr[i][j] = (arr[i][j] - arrmin[j]) / arrdeta[j]
-            temp.append(float((arr[i][j] - arrmin[j]) / arrdeta[j]))
+            if arrdeta[j] != 0:
+                temp.append(float((arr[i][j] - arrmin[j]) / arrdeta[j]))
+            else:
+                temp.append(.0)
             # print(arr[i][j], end=' ')
         result.append(temp)
         # print("\n")
     return result
 
-
-if __name__ == "__main__":
+from textProcessing.vectorizer import Vectorizer
+def doVectoringComments():
+    """
+    将标注好的评论文本向量化，并存入数据库
+    1. 从signedcomments表中查询标注好的评论
+    2. 向量化评论
+    3. 向量归一化
+    3. 将归一化的向量插入vectorizedcomments表中
+    """
     fr = time.time()
     # 已标注评论数据库表的操作对象
     signedCommentsHandler = SignedCommentsDbHandler()
     # 向量化评论数据库表的操作对象
     vectorizedCommentsDbHandler = VectorizedCommentsDbHandler()
-    # 用于向量化的类
-    vectorizer = Vectorizer()
     # 标注好的评论元组
     signedComments = signedCommentsHandler.queryAll()
-
-
+    vectorizer = Vectorizer()
     vectorizedCommentsList = []
     # 评论向量化
+    count = 0
     for signedComment in signedComments:
-        vectorizedComment = vectorizer.vectoring(signedComment[1],
-                                                 signedComment[2],
-                                                 signedComment[3],
-                                                 signedComment[6])
+        count += 1
+        print(count)
+        vectorizedComment = vectorizer.vectoringOneComment(
+            signedComment[1], signedComment[2], signedComment[3],
+            signedComment[6], signedComment[8], signedComment[9])
         vectorizedCommentsList.append(vectorizedComment)
     # 归一化特征向量
-    arr = normalizing(np.array(vectorizedCommentsList,float))
+    arr = normalizing(np.array(vectorizedCommentsList, float))
     for vc in arr:
         vectorizedCommentsDbHandler.insertVectorizedComment(vc)
     to = time.time()
-    print("用时:%f"%(to-fr))
+    print("用时:%f" % (to - fr))
+
+from textProcessing.vectorizer import vectoringContent
+def doVectoringContent():
+    signedCommentsDbHandler = SignedCommentsDbHandler()
+    vectorizedContentsDbHandler = VectorizedContentsDbHandler()
+    commentMatrix = np.array(signedCommentsDbHandler.queryAll())
+    contentMatrix = commentMatrix[:,(1,3)]
+    print(contentMatrix,contentMatrix.shape)
+    result = vectoringContent(25, contentMatrix)
+    for vectorizedContent in result:
+        vectorizedContentsDbHandler.insertVectorizedContent(vectorizedContent)
+
+if __name__ == "__main__":
+    doVectoringComments()

@@ -4,6 +4,7 @@ import random
 import sys
 from database.signed_comments_dbHandler import SignedCommentsDbHandler
 from database.vectorized_comments_dbHandler import VectorizedCommentsDbHandler
+from database.vectorized_contents_dbHandler import VectorizedContentsDbHandler
 
 class UsefulData(object):
     content_array = np.array([])
@@ -45,8 +46,8 @@ class MLData(object):
 def load_vectorized_data():
     ml_data = MLData()
     vcDbHandler = VectorizedCommentsDbHandler()
-    notSpamData = list(vcDbHandler.queryNotSpam(MAX_INT))
-    spamData = list(vcDbHandler.querySpam(MAX_INT))
+    notSpamData = list(vcDbHandler.queryNotSpam())
+    spamData = list(vcDbHandler.querySpam())
     random.shuffle(notSpamData)
     random.shuffle(spamData)
 
@@ -56,13 +57,69 @@ def load_vectorized_data():
 
     X, y = [], []
     for vectorizedData in vectorizedDataList:
+        # X.append(list(vectorizedData[1:12]))
+        # X.append(list(vectorizedData[12:-1]))
         X.append(vectorizedData[1:-1])
         y.append(vectorizedData[-1])
-    ml_data.X = np.array(X)
-    ml_data.y = np.array(y)
+    ml_data.X = np.array(X,np.float32)
+    ml_data.y = np.array(y,np.int32)
     print(ml_data.X.shape,ml_data.y.shape)
     return ml_data
 
+# def load_vectorized_data():
+#     ml_data = MLData()
+#     vcDbHandler = VectorizedCommentsDbHandler()
+#     notSpamData = list(vcDbHandler.queryNotSpam(MAX_INT))
+#     spamData = list(vcDbHandler.querySpam(MAX_INT))
+#     random.shuffle(notSpamData)
+#     random.shuffle(spamData)
+#
+#     minLen = (len(notSpamData)<=len(spamData) and len(notSpamData) or len(spamData))
+#     vectorizedDataList = notSpamData[:minLen] + spamData[:minLen]
+#     random.shuffle(vectorizedDataList)
+#
+#     X, y = [], []
+#     for vectorizedData in vectorizedDataList:
+#         X.append(vectorizedData[1:-1])
+#         y.append(vectorizedData[-1])
+#     ml_data.X = np.array(X)
+#     ml_data.y = np.array(y)
+#     print(ml_data.X.shape,ml_data.y.shape)
+#     return ml_data
+
+
+class DataForRNN(object):
+    X = np.array([],np.int64)
+    y = np.array([],np.int64)
+    vocabularyLen = 0
+
+def load_vectorized_data_forRNN():
+    ml_data = DataForRNN()
+    vcDbHandler = VectorizedContentsDbHandler()
+    notSpamData = list(vcDbHandler.queryNotSpam(MAX_INT))
+    spamData = list(vcDbHandler.querySpam(MAX_INT))
+    random.shuffle(notSpamData)
+    random.shuffle(spamData)
+
+    minLen = (len(notSpamData) <= len(spamData) and len(notSpamData) or len(spamData))
+    vectorizedDataList = notSpamData[:minLen] + spamData[:minLen]
+    random.shuffle(vectorizedDataList)
+
+    X, y = [], []
+    maxIndex = 0
+    for vectorizedData in vectorizedDataList:
+        strList = vectorizedData[1].split()
+        tempList = []
+        for str in strList:
+            tempList.append(int(str))
+            maxIndex = maxIndex < int(str) and int(str) or maxIndex
+        X.append(tempList)
+        y.append(vectorizedData[-1])
+    ml_data.X = np.array(X)
+    ml_data.y = np.array(y)
+    ml_data.vocabularyLen = maxIndex+1
+    print(ml_data.X.shape, ml_data.y.shape, ml_data.vocabularyLen)
+    return ml_data
 
 if __name__ == "__main__":
-    load_useful_data()
+    load_vectorized_data()
