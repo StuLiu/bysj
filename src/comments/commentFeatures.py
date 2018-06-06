@@ -26,11 +26,12 @@ def showPersentOfSpamAndNotSpam():
     y = [countNotSpam/(countNotSpam+countSpam)*100]
     yy = [countSpam/(countNotSpam+countSpam)*100]
     print(y,yy)
-    plt.bar(x, y, 0.4, color="green", label='not spam comment')
-    plt.bar(xx, yy, 0.4, color="red", label='spam comment')
+    plt.bar(x, y, 0.4, color="#43CD80", label='not spam comment')
+    plt.bar(xx, yy, 0.4, color="#FF4040", label='spam comment')
     plt.legend(loc='upper right')
-    plt.xlabel("isSpam")
+    plt.xticks([0,1], ['spam', 'notSpam'])
     plt.ylabel("persent/%")
+    plt.xlabel("isOrNotSpam")
     plt.title("persent of spam and notspam comments")
     plt.axis([-1, 2, 0, 100])
     # 使用text显示数值
@@ -38,7 +39,7 @@ def showPersentOfSpamAndNotSpam():
         plt.text(a, b + 1, '%.2f' % b, ha='center', va='bottom', fontsize=11)
     for a, b in zip(xx, yy):
         plt.text(a, b + 1, '%.2f' % b, ha='center', va='bottom', fontsize=11)
-
+    plt.grid(color='b', linewidth='0.2', linestyle='--', axis='y')
     plt.show()
 
 
@@ -61,6 +62,7 @@ def showDistributionOfContentLength():
     plt.title("length of comment")
     plt.xlabel("length")
     plt.ylabel('count')
+    plt.grid(color='b', linewidth='0.2', linestyle='--')
     plt.show()
 
 # 展示不同评分等级下评论的分布
@@ -81,15 +83,15 @@ def showDistributionOfRating():
 
     plt.figure(1)  # 创建第一个画板（figure）
     x1 = [0.8, 1.8, 2.8, 3.8, 4.8]
-    plt.bar(x1, countRatingSpam, 0.4, color="red", label='spam comment')
+    plt.bar(x1, countRatingSpam, 0.4, color="#FF4040", label='spam comment')
 
     x2 = [1.2, 2.2, 3.2, 4.2, 5.2]
-    plt.bar(x2, countRatingNotSpam, 0.4, color="green", label='not spam comment')
+    plt.bar(x2, countRatingNotSpam, 0.4, color="#43CD80", label='not spam comment')
     plt.legend(loc='upper left')
     plt.title("rating distribution")
     plt.xlabel("rating")
     plt.ylabel('persent/%')
-    plt.grid(color='b', linewidth='0.2', linestyle='--')
+    plt.grid(color='b', linewidth='0.2', linestyle='--', axis='y')
     plt.show()
 
 if __name__ == '__main__':

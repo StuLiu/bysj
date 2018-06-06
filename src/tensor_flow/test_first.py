@@ -37,6 +37,10 @@ with tf.Session() as sess:
 # x = np.array([[1, 2, 3], [4, 5, 6]], np.float32)
 # print(x,type(x),x.shape,x.dtype,x.size)
 
+# x = np.array([[1,2,3,4,5],[6,7,8,9,10]])
+# w = np.array([[1,1,1],[1,1,1],[1,1,1],[1,1,1],[1,1,1]])
+# print(np.matmul(x,w)+np.array([2,2,2]))
+
 # if __name__ == "__main__":
 #     # 使用 NumPy 生成假数据(phony data), 总共 100 个点.
 #     x_data = np.float32(np.random.rand(2, 100))  # 随机输入

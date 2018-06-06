@@ -6,7 +6,9 @@
 from tensorflow.examples.tutorials.mnist import input_data
 import tensorflow as tf
 
-#加载数据集
+# 加载数据集
+# mnist是一个轻量级的类。它以Numpy数组的形式存储着训练、校验和测试数据集。
+# 同时提供了一个函数，用于在迭代中获得minibatch，后面我们将会用到
 mnist = input_data.read_data_sets("MNIST_data/",one_hot=True)
 
 # 创建交互式session
@@ -27,6 +29,7 @@ w = tf.Variable(tf.zeros([784,10]))
 # 初始化为[ 0.  0.  0.  0.  0.  0.  0.  0.  0.  0.] , b.shape=(10,)
 b = tf.Variable(tf.zeros([10]))
 
+# 建立一个拥有一个线性层的softmax回归模型
 # 这里的softmax可以看成是一个激励（activation）函数或者链接（link）函数
 # softmax(xi)=exp(xi)/∑j(xj)
 # 把我们定义的线性函数的输出转换成我们想要的格式，也就是关于10个数字类的概率分布

@@ -64,10 +64,11 @@ def doVectoringComments():
             signedComment[1], signedComment[2], signedComment[3],
             signedComment[6], signedComment[8], signedComment[9])
         vectorizedCommentsList.append(vectorizedComment)
+        vectorizedCommentsDbHandler.insertVectorizedComment(vectorizedComment)
     # 归一化特征向量
-    arr = normalizing(np.array(vectorizedCommentsList, float))
-    for vc in arr:
-        vectorizedCommentsDbHandler.insertVectorizedComment(vc)
+    # arr = normalizing(np.array(vectorizedCommentsList, float))
+    # for vc in arr:
+    #     vectorizedCommentsDbHandler.insertVectorizedComment(vc)
     to = time.time()
     print("用时:%f" % (to - fr))
 

@@ -6,47 +6,6 @@
 import copy
 import numpy as np
 
-def fit_evalueate_tf_idf(classifier, X, y):
-    # 训练样本和测试样本的总数据量
-    dataLen = len(y)
-    print("examples count:", dataLen)
-
-    # 训练计算过程
-    try:
-        X_train = X[:int(0.8 * len(y))]
-        y_train = y[:int(0.8 * len(y))]
-        X_test = X[int(0.8 * len(y)):]
-        y_test = y[int(0.8 * len(y)):]
-        classifierTemp = copy.deepcopy(classifier)
-        classifierTemp.fit(X_train, y_train)
-        predict_result = classifierTemp.predict(X_test)
-        for i in range(0, int(len(predict_result))):
-            predict_result[i] = predict_result[i] > 0.5 and 1 or 0
-        target = y_test
-        accuracy_count, TP_count, FP_count, FN_count = 0., 0., 0., 0.
-        for i in range(0, int(len(predict_result))):
-            if predict_result[i] == target[i]:
-                accuracy_count += 1
-            if predict_result[i] == 1 and target[i] == 1:
-                TP_count += 1
-            if predict_result[i] == 0 and target[i] == 1:
-                FN_count += 1
-            if predict_result[i] == 1 and target[i] == 0:
-                FP_count += 1
-        accuracy = accuracy_count / len(target)
-        precision = (TP_count + FP_count) != 0 and TP_count / (TP_count + FP_count) or 1
-        recall = (TP_count + FN_count) != 0 and TP_count / (TP_count + FN_count) or 1
-        F1 = (2 * precision * recall) / (precision + recall)
-        print("accuracy:", accuracy)
-        print('precision:', precision)
-        print('recall:', recall)
-        print('F1 score:', F1)
-
-    except Exception as e:
-        print(e)
-
-
-
 
 def fit_evalueate(classifier, X, y):
     """
@@ -62,6 +21,7 @@ def fit_evalueate(classifier, X, y):
 
     # 5折交叉验证
     cutLen = int(dataLen/5)
+
     X_train = [ X[:4*cutLen],
                 X[cutLen:],
                 np.concatenate((X[:cutLen], X[2*cutLen:])),
@@ -86,6 +46,7 @@ def fit_evalueate(classifier, X, y):
             classifierTemp = copy.deepcopy(classifier)
             classifierTemp.fit(X_train[j], y_train[j])
             predict_result = classifierTemp.predict(X_test[j])
+            # print(predict_result)
             for i in range(0,int(len(predict_result))):
                 predict_result[i] = predict_result[i] > 0.5 and 1 or 0
             target = y_test[j]
@@ -117,3 +78,53 @@ def fit_evalueate(classifier, X, y):
 
     return [sum(accuracyList)/len(accuracyList), sum(precisionList)/len(precisionList),
             sum(recallList) / len(recallList), sum(F1List)/len(F1List)]
+
+
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+
+def fit_evalueate_tf_idf(classifier, X, y):
+    # 训练样本和测试样本的总数据量
+    dataLen = len(y)
+    print("examples count:", dataLen)
+
+    # 训练计算过程
+    try:
+        X_train = X[:int(0.8 * len(y))]
+        y_train = y[:int(0.8 * len(y))]
+        X_test = X[int(0.8 * len(y)):]
+        y_test = y[int(0.8 * len(y)):]
+        classifierTemp = copy.deepcopy(classifier)
+        classifierTemp.fit(X_train, y_train)
+        predict_result = classifierTemp.predict(X_test)
+        # print('y_test len=', len(y_test))
+        # print('predict_result len=', len(predict_result))
+        #
+        # print("accuracy:", accuracy_score(y_test, predict_result))
+        # print('precision:', precision_score(y_test, predict_result))
+        # print('recall:', recall_score(y_test, predict_result))
+        # print('F1 score:', f1_score(y_test, predict_result))
+
+        for i in range(0, int(len(predict_result))):
+            predict_result[i] = predict_result[i] > 0.5 and 1 or 0
+        target = y_test
+        accuracy_count, TP_count, FP_count, FN_count = 0., 0., 0., 0.
+        for i in range(0, int(len(predict_result))):
+            if predict_result[i] == target[i]:
+                accuracy_count += 1
+            if predict_result[i] == 1 and target[i] == 1:
+                TP_count += 1
+            if predict_result[i] == 0 and target[i] == 1:
+                FN_count += 1
+            if predict_result[i] == 1 and target[i] == 0:
+                FP_count += 1
+        accuracy = accuracy_count / len(target)
+        precision = (TP_count + FP_count) != 0 and TP_count / (TP_count + FP_count) or 0.5
+        recall = (TP_count + FN_count) != 0 and TP_count / (TP_count + FN_count) or 0.5
+        F1 = (2 * precision * recall) / (precision + recall)
+        print("accuracy:", accuracy)
+        print('precision:', precision)
+        print('recall:', recall)
+        print('F1 score:', F1)
+
+    except Exception as e:
+        print(e)

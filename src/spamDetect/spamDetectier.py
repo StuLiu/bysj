@@ -1,9 +1,8 @@
 
 from spamDetect.commentVectorizer import CommentVectorizer
-from textProcessing.load_data import load_vectorized_data
-from sklearn.ensemble import ExtraTreesClassifier, GradientBoostingClassifier
 import numpy as np
 import time,random
+from sklearn.externals import joblib
 from database.signed_comments_dbHandler import SignedCommentsDbHandler
 
 
@@ -14,9 +13,7 @@ class SpamDetecter(object):
     def __init__(self):
         fr = time.time()
         self.__vectorizer = CommentVectorizer()
-        self.__classifier = GradientBoostingClassifier()
-        dataset = load_vectorized_data()
-        self.__classifier.fit(dataset.X, dataset.y)
+        self.__classifier = joblib.load("model_save/GBclf.m")
         to = time.time()
         print('init SpamDetecter using {}s'.format(to-fr))
 
@@ -28,7 +25,6 @@ class SpamDetecter(object):
         p = self.__classifier.predict_proba(np.array(featuresVector, dtype=np.float32).reshape(1, -1))
         # print(r,p)
         return r,p
-
 
 if __name__ == '__main__':
 

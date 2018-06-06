@@ -18,7 +18,7 @@ from sklearn.feature_extraction.text import CountVectorizer,TfidfTransformer
 # 基于词语频数(count)的词袋模型
 count_vect = CountVectorizer()
 X_train_counts = count_vect.fit_transform(twenty_train.data)
-print(X_train_counts.shape)
+print(X_train_counts)
 # 基于词频(tf)的词袋模型
 tf_transformer = TfidfTransformer(use_idf=False).fit(X_train_counts)
 X_train_tf = tf_transformer.transform(X_train_counts)
